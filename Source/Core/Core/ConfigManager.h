@@ -231,9 +231,6 @@ struct SConfig : NonCopyable
   static IniFile LoadLocalGameIni(const std::string& id, std::optional<u16> revision);
   static IniFile LoadGameIni(const std::string& id, std::optional<u16> revision);
 
-  static std::vector<std::string> GetGameIniFilenames(const std::string& id,
-                                                      std::optional<u16> revision);
-
   std::string m_NANDPath;
   std::string m_DumpPath;
 
@@ -257,6 +254,8 @@ struct SConfig : NonCopyable
   bool m_InterfaceLogConfigWindow;
   bool m_InterfaceExtendedFPSInfo;
   bool m_show_active_title = false;
+  bool m_use_builtin_title_database = true;
+  bool m_show_development_warning;
 
   bool m_ListDrives;
   bool m_ListWad;

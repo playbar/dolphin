@@ -38,6 +38,8 @@ void GeneralPane::CreateLayout()
   CreateAnalytics();
 #endif
   CreateAdvanced();
+
+  m_main_layout->setContentsMargins(0, 0, 0, 0);
   m_main_layout->addStretch(1);
   setLayout(m_main_layout);
 }
@@ -79,7 +81,6 @@ void GeneralPane::CreateBasic()
   basic_group_layout->addLayout(speed_limit_layout);
 
   m_combobox_speedlimit = new QComboBox();
-  m_combobox_speedlimit->setMaximumWidth(300);
 
   m_combobox_speedlimit->addItem(tr("Unlimited"));
   for (int i = 10; i <= 200; i += 10)  // from 10% to 200%
@@ -106,7 +107,6 @@ void GeneralPane::CreateAnalytics()
 
   m_checkbox_enable_analytics = new QCheckBox(tr("Enable Usage Statistics Reporting"));
   m_button_generate_new_identity = new QPushButton(tr("Generate a New Statistics Identity"));
-  m_button_generate_new_identity->setMaximumWidth(300);
   analytics_group_layout->addWidget(m_checkbox_enable_analytics);
   analytics_group_layout->addWidget(m_button_generate_new_identity);
 }
@@ -140,14 +140,13 @@ void GeneralPane::CreateAdvanced()
 
 void GeneralPane::LoadConfig()
 {
-  auto& settings = Settings::Instance();
-  m_checkbox_force_ntsc->setChecked(settings.GetForceNTSCJ());
+  m_checkbox_force_ntsc->setChecked(SConfig::GetInstance().bForceNTSCJ);
 #if defined(USE_ANALYTICS) && USE_ANALYTICS
-  m_checkbox_enable_analytics->setChecked(settings.GetAnalyticsEnabled());
+  m_checkbox_enable_analytics->setChecked(SConfig::GetInstance().m_analytics_enabled);
 #endif
   m_checkbox_dualcore->setChecked(SConfig::GetInstance().bCPUThread);
   m_checkbox_cheats->setChecked(SConfig::GetInstance().bEnableCheats);
-  int selection = qRound(settings.GetEmulationSpeed() * 10);
+  int selection = qRound(SConfig::GetInstance().m_EmulationSpeed * 10);
   if (selection < m_combobox_speedlimit->count())
     m_combobox_speedlimit->setCurrentIndex(selection);
   m_checkbox_dualcore->setChecked(SConfig::GetInstance().bCPUThread);
@@ -173,10 +172,9 @@ void GeneralPane::LoadConfig()
 
 void GeneralPane::OnSaveConfig()
 {
-  auto& settings = Settings::Instance();
-  settings.SetForceNTSCJ(m_checkbox_force_ntsc->isChecked());
+  SConfig::GetInstance().bForceNTSCJ = m_checkbox_force_ntsc->isChecked();
 #if defined(USE_ANALYTICS) && USE_ANALYTICS
-  settings.SetAnalyticsEnabled(m_checkbox_enable_analytics->isChecked());
+  SConfig::GetInstance().m_analytics_enabled = m_checkbox_enable_analytics->isChecked();
 #endif
   SConfig::GetInstance().bCPUThread = m_checkbox_dualcore->isChecked();
   SConfig::GetInstance().bEnableCheats = m_checkbox_cheats->isChecked();

@@ -215,11 +215,7 @@ QString GameFile::GetBannerString(const QMap<DiscIO::Language, QString>& m) cons
     return QString();
 
   bool wii = m_platform != DiscIO::Platform::GAMECUBE_DISC;
-  DiscIO::Language current_lang;
-  if (wii)
-    current_lang = Settings::Instance().GetWiiSystemLanguage();
-  else
-    current_lang = Settings::Instance().GetGCSystemLanguage();
+  DiscIO::Language current_lang = SConfig::GetInstance().GetCurrentLanguage(wii);
 
   if (m.contains(current_lang))
     return m[current_lang];
@@ -331,7 +327,12 @@ bool GameFile::Install()
 {
   _assert_(m_platform == DiscIO::Platform::WII_WAD);
 
-  return WiiUtils::InstallWAD(m_path.toStdString());
+  bool installed = WiiUtils::InstallWAD(m_path.toStdString());
+
+  if (installed)
+    Settings::Instance().NANDRefresh();
+
+  return installed;
 }
 
 bool GameFile::Uninstall()
